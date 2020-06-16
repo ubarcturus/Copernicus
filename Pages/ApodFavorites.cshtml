@@ -1,0 +1,67 @@
+﻿@page
+@model Copernicus_Weather.Pages.ApodFavoritesModel
+
+@{
+    ViewData["Title"] = "ApodFavorites";
+}
+
+<h1>ApodFavorites</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].Explanation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].Copyright)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].Url)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].HdUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apod[0].Date)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Apod)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Explanation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Copyright)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Url)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HdUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
