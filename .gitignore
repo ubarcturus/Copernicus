@@ -351,3 +351,4 @@ MigrationBackup/
 
 # Workspace related items
 /wwwroot/apod/*.jpg
+/.vscode

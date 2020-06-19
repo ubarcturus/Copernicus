@@ -37,7 +37,7 @@ namespace Copernicus_Weather.Pages
         {
             var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
             var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
-            var nasaUrl = "https://api.nasa.gov/planetary/apod?api_key=" + nasaApiKey;
+            var nasaUrl = "https://api.nasa.gov/planetary/apod?api_key=" + nasaApiKey + "&date=2020-06-15";
             var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
 
             var httpClient = new HttpClient();
@@ -52,8 +52,10 @@ namespace Copernicus_Weather.Pages
                     {
                         string url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
                         var response = await httpClient.GetAsync(url);
-                        dynamic video = JObject.Parse(await response.Content.ReadAsStringAsync());
-                        object[] youtubeThumbnails = video.items[0].snippet.thumbnails;
+                        // dynamic video = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+                        // YoutubeThumbnails thumbnails = JsonConvert.DeserializeObject<YoutubeThumbnails>(JsonConvert.SerializeObject(video["items"][0]["snippet"]["thumbnails"]));
+                        JObject video = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        YoutubeThumbnails thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
                     }
 
                     pictureUrl = Apod.Url;
@@ -80,7 +82,7 @@ namespace Copernicus_Weather.Pages
                 else
                 {
                     pictureUrl = Apod.Url;
-                    _logger.LogWarning("Bild nicht gefunden");
+                    _logger.LogInformation("Bild nicht gefunden");
                     SavePicture(httpClient);
                 }
             }
