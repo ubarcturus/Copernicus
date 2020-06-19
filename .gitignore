@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 # Workspace related items
-/wwwroot/apod
+/wwwroot/apod/*.jpg
