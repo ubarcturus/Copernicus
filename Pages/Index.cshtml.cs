@@ -37,7 +37,7 @@ namespace Copernicus_Weather.Pages
         {
             var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
             var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
-            var nasaUrl = "https://api.nasa.gov/planetary/apod?api_key=" + nasaApiKey + "&date=2020-06-15";
+            var nasaUrl = $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}";
             var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
 
             var httpClient = new HttpClient();
@@ -52,15 +52,18 @@ namespace Copernicus_Weather.Pages
                     {
                         string url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
                         var response = await httpClient.GetAsync(url);
-                        // dynamic video = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
-                        // YoutubeThumbnails thumbnails = JsonConvert.DeserializeObject<YoutubeThumbnails>(JsonConvert.SerializeObject(video["items"][0]["snippet"]["thumbnails"]));
                         JObject video = JObject.Parse(await response.Content.ReadAsStringAsync());
                         YoutubeThumbnails thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
+                        pictureUrl = GetThumbnailUrl(thumbnails);
+                        Apod.Url = pictureUrl;
                     }
 
-                    pictureUrl = Apod.Url;
+                    else
+                    {
+                        pictureUrl = Apod.Url;
+                    }
+
                     Apod.LocalUrl = GetImagePath();
-                    //SavePicture(httpClient, imagePath);
                     _context.Add(Apod);
                     var v = await _context.SaveChangesAsync();
                     _logger.LogInformation("Datenbankänderungen gespeichert");
@@ -103,7 +106,28 @@ namespace Copernicus_Weather.Pages
 
         public string GetImagePath()
         {
-            return $"apod/{Apod.Title.Replace(" ", "-")}_{Apod.Date.ToString("yyyy-MM-dd")}.jpg";
+            return $"apod/{Apod.Date.ToString("yyyy-MM-dd")}_{Regex.Replace(Apod.Title, @"[\/:*?""<>\s]", "-")}.jpg";
+        }
+
+        public string GetThumbnailUrl(YoutubeThumbnails thumbnails)
+        {
+            if (thumbnails.MaxRes != null)
+            {
+                return thumbnails.MaxRes.Url;
+            }
+            if (thumbnails.Standard != null)
+            {
+                return thumbnails.Standard.Url;
+            }
+            if (thumbnails.High != null)
+            {
+                return thumbnails.High.Url;
+            }
+            if (thumbnails.Medium != null)
+            {
+                return thumbnails.Medium.Url;
+            }
+            return thumbnails.Default.Url;
         }
     }
 }
