@@ -1,13 +1,7 @@
-﻿using System;
-using Copernicus_Weather.Data;
+﻿using Copernicus_Weather.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup(typeof(Copernicus_Weather.Areas.Identity.IdentityHostingStartup))]
+[assembly: HostingStartup(typeof(IdentityHostingStartup))]
 
 namespace Copernicus_Weather.Areas.Identity
 {

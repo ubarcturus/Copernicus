@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Copernicus_Weather.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Copernicus_Weather.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -14,7 +9,8 @@ namespace Copernicus_Weather.Pages
     {
         private readonly ILogger<WeatherReportModel> _logger;
 
-        public WeatherReportModel(ILogger<WeatherReportModel> logger, IConfiguration configuration, Copernicus_WeatherContext context)
+        public WeatherReportModel(ILogger<WeatherReportModel> logger, IConfiguration configuration,
+            Copernicus_WeatherContext context)
         {
             _logger = logger;
             Configuration = configuration;

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 {
@@ -17,10 +11,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnGet()
         {
-            if (RecoveryCodes == null || RecoveryCodes.Length == 0)
-            {
-                return RedirectToPage("./TwoFactorAuthentication");
-            }
+            if (RecoveryCodes == null || RecoveryCodes.Length == 0) return RedirectToPage("./TwoFactorAuthentication");
 
             return Page();
         }

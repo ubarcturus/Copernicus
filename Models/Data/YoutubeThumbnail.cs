@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Copernicus_Weather.Models
+﻿namespace Copernicus_Weather.Models
 {
     public class YoutubeThumbnail
     {

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Copernicus_Weather.Data;
 using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace Copernicus_Weather.Pages
 {
@@ -50,10 +47,10 @@ namespace Copernicus_Weather.Pages
                     Apod = await httpClient.GetFromJsonAsync<Apod>(nasaUrl);
                     if (Apod.Media_Type == "video")
                     {
-                        string url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
+                        var url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
                         var response = await httpClient.GetAsync(url);
-                        JObject video = JObject.Parse(await response.Content.ReadAsStringAsync());
-                        YoutubeThumbnails thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
+                        var video = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        var thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
                         pictureUrl = GetThumbnailUrl(thumbnails);
                         Apod.Url = pictureUrl;
                     }
@@ -111,22 +108,10 @@ namespace Copernicus_Weather.Pages
 
         public string GetThumbnailUrl(YoutubeThumbnails thumbnails)
         {
-            if (thumbnails.MaxRes != null)
-            {
-                return thumbnails.MaxRes.Url;
-            }
-            if (thumbnails.Standard != null)
-            {
-                return thumbnails.Standard.Url;
-            }
-            if (thumbnails.High != null)
-            {
-                return thumbnails.High.Url;
-            }
-            if (thumbnails.Medium != null)
-            {
-                return thumbnails.Medium.Url;
-            }
+            if (thumbnails.MaxRes != null) return thumbnails.MaxRes.Url;
+            if (thumbnails.Standard != null) return thumbnails.Standard.Url;
+            if (thumbnails.High != null) return thumbnails.High.Url;
+            if (thumbnails.Medium != null) return thumbnails.Medium.Url;
             return thumbnails.Default.Url;
         }
     }
