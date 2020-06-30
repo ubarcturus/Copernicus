@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -48,7 +49,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
         public IActionResult OnPost(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Page("./ExternalLogin", "Callback", new {returnUrl});
+            var redirectUrl = Url.Page("./ExternalLogin", "Callback", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
@@ -59,14 +60,14 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
-                return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";
-                return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
             // Sign in the user with this external login provider if the user already has a login.
@@ -101,12 +102,12 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
-                return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser {UserName = Input.Email, Email = Input.Email};
+                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -122,7 +123,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             null,
-                            new {area = "Identity", userId, code},
+                            new { area = "Identity", userId, code },
                             Request.Scheme);
 
                         await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -130,7 +131,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
 
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                            return RedirectToPage("./RegisterConfirmation", new {Input.Email});
+                            return RedirectToPage("./RegisterConfirmation", new { Input.Email });
 
                         await _signInManager.SignInAsync(user, false, info.LoginProvider);
 

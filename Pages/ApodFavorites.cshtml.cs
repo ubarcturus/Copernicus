@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Copernicus_Weather.Data;
 using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Copernicus_Weather.Pages
 {

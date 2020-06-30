@@ -1,4 +1,6 @@
-﻿namespace Copernicus_Weather.Migrations
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Copernicus_Weather.Migrations
 {
     public partial class LocalUrl : Migration
     {

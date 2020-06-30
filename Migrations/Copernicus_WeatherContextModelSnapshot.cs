@@ -2,6 +2,9 @@
 
 using System;
 using Copernicus_Weather.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Copernicus_Weather.Migrations
 {

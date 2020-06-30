@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -40,7 +41,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     null,
-                    new {area = "Identity", code},
+                    new { area = "Identity", code },
                     Request.Scheme);
 
                 await _emailSender.SendEmailAsync(

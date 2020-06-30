@@ -1,14 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Copernicus_Weather.Data;
 using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace Copernicus_Weather.Pages
 {

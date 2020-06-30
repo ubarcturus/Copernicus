@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -52,7 +53,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser {UserName = Input.Email, Email = Input.Email};
+                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -63,14 +64,14 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         null,
-                        new {area = "Identity", userId = user.Id, code, returnUrl},
+                        new { area = "Identity", userId = user.Id, code, returnUrl },
                         Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        return RedirectToPage("RegisterConfirmation", new {email = Input.Email, returnUrl});
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
 
                     await _signInManager.SignInAsync(user, false);
                     return LocalRedirect(returnUrl);
