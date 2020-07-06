@@ -4,6 +4,6 @@ namespace Copernicus_Weather.Models.Data
 {
     public class WeatherReport
     {
-        public List<Sol> Days { get; set; }
+        public IDictionary<int, Sol> Days { get; set; }
     }
 }

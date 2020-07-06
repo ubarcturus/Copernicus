@@ -12,5 +12,17 @@ namespace Copernicus_Weather.Data
         }
 
         public DbSet<Apod> Apod { get; set; }
+        public DbSet<UserApod> UserApod { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            //Festlegen, dass die Tabelle einen Eindeutigen Schlüssel aus zwei Spalten hat
+            //Erforderlich für pure join tables
+            modelBuilder.Entity<UserApod>()
+                .HasKey(z => new { z.IdentityUserId, z.ApodId });
+        }
+
     }
 }

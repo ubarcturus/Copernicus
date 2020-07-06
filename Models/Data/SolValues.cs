@@ -1,14 +1,29 @@
+using System.Text.Json;
+
 namespace Copernicus_Weather.Models.Data
 {
     public class SolValues
     {
-        // Average
-        public float Av { get; set; }
+        public double Average { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
 
-        // Min
-        public float Mn { get; set; }
+        public static implicit operator SolValues(JsonElement v)
+        {
+            try
+            {
+                return new SolValues
+                {
+                    Average = v.GetProperty("av").GetDouble(),
+                    Min = v.GetProperty("mn").GetDouble(),
+                    Max = v.GetProperty("mx").GetDouble()
+                };
 
-        // Max
-        public float Mx { get; set; }
+            }
+            catch (System.Exception)
+            {
+                return null;
+            }
+        }
     }
 }
