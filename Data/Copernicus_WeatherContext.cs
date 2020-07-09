@@ -23,6 +23,5 @@ namespace Copernicus_Weather.Data
             modelBuilder.Entity<UserApod>()
                 .HasKey(z => new { z.IdentityUserId, z.ApodId });
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Web;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -33,16 +34,17 @@ namespace Copernicus_Weather.Pages
 
         public string pictureUrl { get; set; }
 
-        public async Task<PageResult> OnGetAsync()
+        public async Task<PageResult> OnGetAsync(string d)
         {
+            DateTime date = DateTime.TryParse(d, out date) ? date.Date : DateTime.Now.Date;
             var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
             var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
-            var nasaUrl = $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}";
+            var nasaUrl = $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}&date={date.ToString("yyyy-MM-dd")}";
             var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
 
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(Request.GetDisplayUrl());
-            Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == DateTime.Now.Date);
+            Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == date);
             if (Apod == null)
             {
                 try
@@ -89,6 +91,7 @@ namespace Copernicus_Weather.Pages
                     SavePicture(httpClient);
                 }
             }
+            // pictureUrl = HttpUtility.UrlEncodeUnicode(pictureUrl);
 
             _logger.LogInformation("Seite wird geladen");
             return Page();

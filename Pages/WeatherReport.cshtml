@@ -6,10 +6,10 @@
 
 <h1>Weather report</h1>
 
-<iframe src='https://mars.nasa.gov/layout/embed/image/insightweather/' width='100%' height='700' scrolling='no'
-    frameborder='0'></iframe>
+@* <iframe src='https://mars.nasa.gov/layout/embed/image/insightweather/' width='100%' height='700' scrolling='no'
+    frameborder='0'></iframe> *@
 
-@* <table class="table table-striped">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(m => m.Days[0].DayOfTheYear)</th>
@@ -26,10 +26,10 @@
                 Sol @(sol.DayOfTheYear)
             </td>
             <td>
-                @(sol.AtmosphericTemperature.Average)
+                @(sol.AtmosphericTemperature.Average) °C
             </td>
             <td>
-                @(sol.HorizontalWindSpeed.Average)
+                @(sol.HorizontalWindSpeed.Average) m/s
             </td>
             <td>
                 @(sol.Season)
@@ -37,4 +37,4 @@
         </tr>
         }
     </tbody>
-</table> *@
+</table>
