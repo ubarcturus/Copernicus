@@ -7,39 +7,39 @@ namespace Copernicus_Weather.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "UserApod",
-                columns: table => new
+                "UserApod",
+                table => new
                 {
                     IdentityUserId = table.Column<string>(nullable: false),
                     ApodId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserApod", x => new { x.IdentityUserId, x.ApodId });
+                    table.PrimaryKey("PK_UserApod", x => new {x.IdentityUserId, x.ApodId});
                     table.ForeignKey(
-                        name: "FK_UserApod_Apod_ApodId",
-                        column: x => x.ApodId,
-                        principalTable: "Apod",
-                        principalColumn: "Id",
+                        "FK_UserApod_Apod_ApodId",
+                        x => x.ApodId,
+                        "Apod",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserApod_AspNetUsers_IdentityUserId",
-                        column: x => x.IdentityUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_UserApod_AspNetUsers_IdentityUserId",
+                        x => x.IdentityUserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserApod_ApodId",
-                table: "UserApod",
-                column: "ApodId");
+                "IX_UserApod_ApodId",
+                "UserApod",
+                "ApodId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserApod");
+                "UserApod");
         }
     }
 }

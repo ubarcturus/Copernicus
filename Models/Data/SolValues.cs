@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 
 namespace Copernicus_Weather.Models.Data
@@ -18,9 +19,8 @@ namespace Copernicus_Weather.Models.Data
                     Min = v.GetProperty("mn").GetDouble(),
                     Max = v.GetProperty("mx").GetDouble()
                 };
-
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return null;
             }

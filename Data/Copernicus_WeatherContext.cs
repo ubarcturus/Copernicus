@@ -21,7 +21,7 @@ namespace Copernicus_Weather.Data
             //Festlegen, dass die Tabelle einen Eindeutigen Schlüssel aus zwei Spalten hat
             //Erforderlich für pure join tables
             modelBuilder.Entity<UserApod>()
-                .HasKey(z => new { z.IdentityUserId, z.ApodId });
+                .HasKey(z => new {z.IdentityUserId, z.ApodId});
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     null,
-                    new { area = "Identity", code },
+                    new {area = "Identity", code},
                     Request.Scheme);
 
                 await _emailSender.SendEmailAsync(

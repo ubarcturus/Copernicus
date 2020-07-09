@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -5,14 +6,12 @@ namespace Copernicus_Weather.Models.Data
 {
     public class Sol
     {
-        [Display(Name = "Day of the year")]
-        public string DayOfTheYear { get; set; }
+        [Display(Name = "Day of the year")] public string DayOfTheYear { get; set; }
 
-        [Display(Name = "temperature")]
-        public SolValues AtmosphericTemperature { get; set; }
+        [Display(Name = "temperature")] public SolValues AtmosphericTemperature { get; set; }
 
-        [Display(Name = "wind speed")]
-        public SolValues HorizontalWindSpeed { get; set; }
+        [Display(Name = "wind speed")] public SolValues HorizontalWindSpeed { get; set; }
+
         public SolValues Pressure { get; set; }
         public string Season { get; set; }
 
@@ -28,9 +27,8 @@ namespace Copernicus_Weather.Models.Data
                     Pressure = v.Value.GetProperty("PRE"),
                     Season = v.Value.GetProperty("Season").GetString()
                 };
-
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return null;
             }

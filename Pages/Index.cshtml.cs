@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Copernicus_Weather.Data;
 using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,17 +29,20 @@ namespace Copernicus_Weather.Pages
 
         public IConfiguration Configuration { get; }
 
-        public Apod Apod { get; set; }
         public Copernicus_WeatherContext _context { get; set; }
 
-        public string pictureUrl { get; set; }
+        public Apod Apod { get; set; }
+        public string PictureUrl { get; set; }
+
+        [TempData] public int ApodId { get; set; }
 
         public async Task<PageResult> OnGetAsync(string d)
         {
             DateTime date = DateTime.TryParse(d, out date) ? date.Date : DateTime.Now.Date;
             var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
             var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
-            var nasaUrl = $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}&date={date.ToString("yyyy-MM-dd")}";
+            var nasaUrl =
+                $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}&date={date.ToString("yyyy-MM-dd")}";
             var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
 
             var httpClient = new HttpClient();
@@ -56,13 +59,13 @@ namespace Copernicus_Weather.Pages
                         var response = await httpClient.GetAsync(url);
                         var video = JObject.Parse(await response.Content.ReadAsStringAsync());
                         var thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
-                        pictureUrl = GetThumbnailUrl(thumbnails);
-                        Apod.Url = pictureUrl;
+                        PictureUrl = GetThumbnailUrl(thumbnails);
+                        Apod.Url = PictureUrl;
                     }
 
                     else
                     {
-                        pictureUrl = Apod.Url;
+                        PictureUrl = Apod.Url;
                     }
 
                     Apod.LocalUrl = GetImagePath();
@@ -82,18 +85,20 @@ namespace Copernicus_Weather.Pages
                 var v = await httpClient.GetAsync(GetImagePath());
                 if (v.IsSuccessStatusCode)
                 {
-                    pictureUrl = Apod.LocalUrl;
+                    PictureUrl = Apod.LocalUrl;
                 }
                 else
                 {
-                    pictureUrl = Apod.Url;
+                    PictureUrl = Apod.Url;
                     _logger.LogInformation("Bild nicht gefunden");
                     SavePicture(httpClient);
                 }
             }
             // pictureUrl = HttpUtility.UrlEncodeUnicode(pictureUrl);
 
+            ApodId = Apod.Id;
             _logger.LogInformation("Seite wird geladen");
+
             return Page();
         }
 
@@ -119,6 +124,12 @@ namespace Copernicus_Weather.Pages
             if (thumbnails.High != null) return thumbnails.High.Url;
             if (thumbnails.Medium != null) return thumbnails.Medium.Url;
             return thumbnails.Default.Url;
+        }
+
+        public async Task<PageResult> OnPostAddToFavoritesAsync()
+        {
+            var test = TempData["ApodId"];
+            return Page();
         }
     }
 }

@@ -77,7 +77,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmailChange",
                     null,
-                    new { userId, email = Input.NewEmail, code },
+                    new {userId, email = Input.NewEmail, code},
                     Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
@@ -110,7 +110,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 null,
-                new { area = "Identity", userId, code },
+                new {area = "Identity", userId, code},
                 Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,

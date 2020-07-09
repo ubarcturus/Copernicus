@@ -7,7 +7,6 @@ using Copernicus_Weather.Models.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Copernicus_Weather.Pages
 {
@@ -31,20 +30,16 @@ namespace Copernicus_Weather.Pages
 
         public async Task<PageResult> OnGetAsync()
         {
-            string nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
-            string nasaUrl = $"https://api.nasa.gov/insight_weather/?api_key={nasaApiKey}&feedtype=json";
+            var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
+            var nasaUrl = $"https://api.nasa.gov/insight_weather/?api_key={nasaApiKey}&feedtype=json";
 
-            HttpClient httpClient = new HttpClient();
+            var httpClient = new HttpClient();
             var response = await httpClient.GetFromJsonAsync<IDictionary<string, dynamic>>(nasaUrl);
             Days = new List<Sol>();
 
             foreach (var day in response)
-            {
-                if ((Sol)day != null)
-                {
+                if ((Sol) day != null)
                     Days.Add(day);
-                }
-            }
 
             return Page();
         }
