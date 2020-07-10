@@ -41,18 +41,19 @@ namespace Copernicus_Weather.Pages
             DateTime date = DateTime.TryParse(d, out date) ? date.Date : DateTime.Now.Date;
             var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
             var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
-            var nasaUrl =
+            var nasaApiUrl =
                 $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}&date={date.ToString("yyyy-MM-dd")}";
             var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
 
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(Request.GetDisplayUrl());
+
             Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == date);
             if (Apod == null)
             {
                 try
                 {
-                    Apod = await httpClient.GetFromJsonAsync<Apod>(nasaUrl);
+                    Apod = await httpClient.GetFromJsonAsync<Apod>(nasaApiUrl);
                     if (Apod.Media_Type == "video")
                     {
                         var url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
@@ -62,13 +63,12 @@ namespace Copernicus_Weather.Pages
                         PictureUrl = GetThumbnailUrl(thumbnails);
                         Apod.Url = PictureUrl;
                     }
-
                     else
                     {
                         PictureUrl = Apod.Url;
                     }
 
-                    Apod.LocalUrl = GetImagePath();
+                    Apod.LocalUrl = GetImageFileName();
                     _context.Add(Apod);
                     var v = await _context.SaveChangesAsync();
                     _logger.LogInformation("Datenbankänderungen gespeichert");
@@ -79,10 +79,9 @@ namespace Copernicus_Weather.Pages
                     _logger.LogWarning(e.Message);
                 }
             }
-
             else
             {
-                var v = await httpClient.GetAsync(GetImagePath());
+                var v = await httpClient.GetAsync("apod/" + GetImageFileName());
                 if (v.IsSuccessStatusCode)
                 {
                     PictureUrl = Apod.LocalUrl;
@@ -90,12 +89,12 @@ namespace Copernicus_Weather.Pages
                 else
                 {
                     PictureUrl = Apod.Url;
-                    _logger.LogInformation("Bild nicht gefunden");
+                    _logger.LogWarning("Bild nicht gefunden");
                     SavePicture(httpClient);
                 }
             }
-            // pictureUrl = HttpUtility.UrlEncodeUnicode(pictureUrl);
 
+            PictureUrl = PictureUrl.Replace("'", @"%27");
             ApodId = Apod.Id;
             _logger.LogInformation("Seite wird geladen");
 
@@ -106,15 +105,15 @@ namespace Copernicus_Weather.Pages
         {
             var response = await httpClient.GetAsync(Apod.Url);
             var picture = await response.Content.ReadAsByteArrayAsync();
-            var directoryPath = $"{Directory.GetCurrentDirectory()}/wwwroot///";
-            var fullPath = Path.Combine(directoryPath, GetImagePath());
+            string directoryPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/wwwroot/apod/").FullName;
+            var fullPath = Path.Combine(directoryPath, GetImageFileName());
             await System.IO.File.WriteAllBytesAsync(fullPath, picture);
             _logger.LogInformation("Bild gespeichert");
         }
 
-        public string GetImagePath()
+        public string GetImageFileName()
         {
-            return $"apod/{Apod.Date.ToString("yyyy-MM-dd")}_{Regex.Replace(Apod.Title, @"[\/:*?""<>\s]", "-")}.jpg";
+            return $"{Apod.Date.ToString("yyyy-MM-dd")}_{Regex.Replace(Apod.Title, @"[\/:*?""<>\s]", "-")}.jpg";
         }
 
         public string GetThumbnailUrl(YoutubeThumbnails thumbnails)
@@ -128,7 +127,7 @@ namespace Copernicus_Weather.Pages
 
         public async Task<PageResult> OnPostAddToFavoritesAsync()
         {
-            var test = TempData["ApodId"];
+            // var test = TempData["ApodId"];
             return Page();
         }
     }
