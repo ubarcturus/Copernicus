@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Copernicus_Weather.Data;
 using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,12 @@ namespace Copernicus_Weather.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration, Copernicus_WeatherContext context)
+        public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration, Copernicus_WeatherContext context, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
+            _userManager = userManager;
             Configuration = configuration;
             _context = context;
         }
@@ -48,14 +51,19 @@ namespace Copernicus_Weather.Pages
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(Request.GetDisplayUrl());
 
+            // Sucht nach einem Datenbankeintrag des heutigen Datums in der Tabelle Apod und füllt den Inhalt in das Apod Objekt.
             Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == date);
+
             if (Apod == null)
             {
                 try
                 {
+                    // Läd das JSON-Objekt mit den Informationen über das APOD von den Nasaservern.
                     Apod = await httpClient.GetFromJsonAsync<Apod>(nasaApiUrl);
+
                     if (Apod.Media_Type == "video")
                     {
+
                         var url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
                         var response = await httpClient.GetAsync(url);
                         var video = JObject.Parse(await response.Content.ReadAsStringAsync());
@@ -68,7 +76,7 @@ namespace Copernicus_Weather.Pages
                         PictureUrl = Apod.Url;
                     }
 
-                    Apod.LocalUrl = GetImageFileName();
+                    Apod.LocalUrl = "apod/" + GetImageFileName();
                     _context.Add(Apod);
                     var v = await _context.SaveChangesAsync();
                     _logger.LogInformation("Datenbankänderungen gespeichert");
@@ -125,10 +133,25 @@ namespace Copernicus_Weather.Pages
             return thumbnails.Default.Url;
         }
 
-        public async Task<PageResult> OnPostAddToFavoritesAsync()
+        public async Task<JsonResult> OnPostAddToFavoritesAsync()
         {
-            // var test = TempData["ApodId"];
-            return Page();
+            int apodId = (int)TempData["ApodId"];
+            var user = await _userManager.GetUserAsync(User);
+            string userId = user?.Id;
+            UserApod UserApod = new UserApod
+            {
+                IdentityUserId = userId,
+                ApodId = apodId
+            };
+
+            if (!User.Identity.IsAuthenticated)
+                return new JsonResult("You are not logged in");
+
+            _context.Add(UserApod);
+            var v = await _context.SaveChangesAsync();
+            _logger.LogInformation("Datenbankänderungen gespeichert");
+
+            return new JsonResult(v);
         }
     }
 }

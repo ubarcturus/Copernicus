@@ -14,5 +14,5 @@
 
 Philipp
 
-- Fehlenden APOD-Ordner erstellen (Index.cshtml.cs 111 System.IO)
+- Fehlenden APOD-Ordner erstellen (Index.cshtml.cs, Zeile 111, System.IO)
 - Kommentieren
