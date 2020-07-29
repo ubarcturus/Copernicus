@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +17,6 @@ namespace Copernicus_Weather.Models
         public string HdUrl { get; set; }
         public string LocalUrl { get; set; }
         [DataType(DataType.Date)] public DateTime Date { get; set; }
+        public List<UserApod> FavoritedByUsers { get; set; }
     }
 }

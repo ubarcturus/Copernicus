@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
@@ -22,7 +23,8 @@ namespace Copernicus_Weather.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration, Copernicus_WeatherContext context, UserManager<IdentityUser> userManager)
+        public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration, Copernicus_WeatherContext context,
+            UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _userManager = userManager;
@@ -30,11 +32,11 @@ namespace Copernicus_Weather.Pages
             _context = context;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
+        private Copernicus_WeatherContext _context { get; set; }
 
-        public Copernicus_WeatherContext _context { get; set; }
-
-        public Apod Apod { get; set; }
+        private Apod Apod { get; set; }
+        public bool FavoritedByCurrentUser { get; set; }
         public string PictureUrl { get; set; }
 
         [TempData] public int ApodId { get; set; }
@@ -52,9 +54,12 @@ namespace Copernicus_Weather.Pages
             httpClient.BaseAddress = new Uri(Request.GetDisplayUrl());
 
             // Sucht nach einem Datenbankeintrag des heutigen Datums in der Tabelle Apod und füllt den Inhalt in das Apod Objekt.
-            Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == date);
+            Apod = await _context.Apod.Include(t => t.FavoritedByUsers).FirstOrDefaultAsync(a => a.Date == date);
+            string userId = await GetUserId();
+            FavoritedByCurrentUser = Apod.FavoritedByUsers.Where(i => userId == i.IdentityUserId).Any();
 
-            if (Apod == null)
+            if (Apod != null && (await httpClient.GetAsync(Apod.LocalUrl)).IsSuccessStatusCode) { PictureUrl = Apod.LocalUrl; }
+            else
             {
                 try
                 {
@@ -63,44 +68,26 @@ namespace Copernicus_Weather.Pages
 
                     if (Apod.Media_Type == "video")
                     {
-
                         var url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
                         var response = await httpClient.GetAsync(url);
                         var video = JObject.Parse(await response.Content.ReadAsStringAsync());
                         var thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
-                        PictureUrl = GetThumbnailUrl(thumbnails);
-                        Apod.Url = PictureUrl;
+                        Apod.Url = GetThumbnailUrl(thumbnails);
                     }
-                    else
-                    {
-                        PictureUrl = Apod.Url;
-                    }
+
+                    PictureUrl = Apod.Url;
 
                     Apod.LocalUrl = "apod/" + GetImageFileName();
                     _context.Add(Apod);
                     var v = await _context.SaveChangesAsync();
-                    _logger.LogInformation("Datenbankänderungen gespeichert");
+                    _logger.LogInformation(v + " Datenbankänderungen gespeichert");
                     SavePicture(httpClient);
                 }
                 catch (Exception e)
                 {
                     _logger.LogWarning(e.Message);
                 }
-            }
-            else
-            {
-                var v = await httpClient.GetAsync("apod/" + GetImageFileName());
-                if (v.IsSuccessStatusCode)
-                {
-                    PictureUrl = Apod.LocalUrl;
-                }
-                else
-                {
-                    PictureUrl = Apod.Url;
-                    _logger.LogWarning("Bild nicht gefunden");
-                    SavePicture(httpClient);
-                }
-            }
+            };
 
             PictureUrl = PictureUrl.Replace("'", @"%27");
             ApodId = Apod.Id;
@@ -109,22 +96,33 @@ namespace Copernicus_Weather.Pages
             return Page();
         }
 
-        public async void SavePicture(HttpClient httpClient)
+        private string GetImageFileName()
         {
-            var response = await httpClient.GetAsync(Apod.Url);
-            var picture = await response.Content.ReadAsByteArrayAsync();
-            string directoryPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/wwwroot/apod/").FullName;
+            var imageFileName = "";
+
+            try
+            {
+                imageFileName =
+                    $"{Apod.Date.ToString("yyyy-MM-dd")}_{Regex.Replace(Apod.Title, @"[\/:*?""<>\s]", "-")}.jpg";
+            }
+            catch
+            {
+                _logger.LogWarning("Name der Bilddatei kann nicht generiert werden");
+            }
+
+            return imageFileName;
+        }
+
+        private async void SavePicture(HttpClient httpClient)
+        {
+            var picture = await (await httpClient.GetAsync(Apod.Url)).Content.ReadAsByteArrayAsync();
+            var directoryPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/wwwroot/apod/").FullName;
             var fullPath = Path.Combine(directoryPath, GetImageFileName());
             await System.IO.File.WriteAllBytesAsync(fullPath, picture);
             _logger.LogInformation("Bild gespeichert");
         }
 
-        public string GetImageFileName()
-        {
-            return $"{Apod.Date.ToString("yyyy-MM-dd")}_{Regex.Replace(Apod.Title, @"[\/:*?""<>\s]", "-")}.jpg";
-        }
-
-        public string GetThumbnailUrl(YoutubeThumbnails thumbnails)
+        private string GetThumbnailUrl(YoutubeThumbnails thumbnails)
         {
             if (thumbnails.MaxRes != null) return thumbnails.MaxRes.Url;
             if (thumbnails.Standard != null) return thumbnails.Standard.Url;
@@ -135,23 +133,26 @@ namespace Copernicus_Weather.Pages
 
         public async Task<JsonResult> OnPostAddToFavoritesAsync()
         {
-            int apodId = (int)TempData["ApodId"];
-            var user = await _userManager.GetUserAsync(User);
-            string userId = user?.Id;
-            UserApod UserApod = new UserApod
+            var apodId = (int)TempData.Peek("ApodId");
+            var UserApod = new UserApod
             {
-                IdentityUserId = userId,
+                IdentityUserId = await GetUserId(),
                 ApodId = apodId
             };
 
             if (!User.Identity.IsAuthenticated)
                 return new JsonResult("You are not logged in");
 
-            _context.Add(UserApod);
+            _context.Update(UserApod);
             var v = await _context.SaveChangesAsync();
-            _logger.LogInformation("Datenbankänderungen gespeichert");
+            _logger.LogInformation(v + " Datenbankänderungen gespeichert");
 
             return new JsonResult(v);
+        }
+
+        private async Task<string> GetUserId()
+        {
+            return (await _userManager.GetUserAsync(User))?.Id;
         }
     }
 }
