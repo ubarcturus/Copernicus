@@ -2,11 +2,15 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Copernicus_Weather.Data;
-using Copernicus_Weather.Models.Data;
+
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+
 using Microsoft.Extensions.Logging;
+
+using Copernicus_Weather.Data;
+using Copernicus_Weather.Models.Data;
+
 
 namespace Copernicus_Weather.Pages
 {
@@ -38,7 +42,7 @@ namespace Copernicus_Weather.Pages
             Days = new List<Sol>();
 
             foreach (var day in response)
-                if ((Sol) day != null)
+                if ((Sol)day != null)
                     Days.Add(day);
 
             return Page();

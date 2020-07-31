@@ -1,53 +1,42 @@
-  
-  
-#  Codeschnipsel
-  
-  
+# Codeschnipsel
+
 ---
-  
-  
-  
-  
-  
-- [APOD](#apod )
-  - [Code](#code )
-  - [Funktionen](#funktionen )
-  
-  
-  
-  
-##  APOD
-  
-  
+
+- [APOD](#apod)
+
+  - [Code](#code)
+  - [Funktionen](#funktionen)
+
+## APOD
+
 Ein alter Block der alle Elemente enthält, um ein APOD zu beziehen, an zu zeigen und zu speichern.
-  
-###  Code
-  
-  
+
+### Code
+
 ```csharp
 private Apod Apod { get; set; }
 public string PictureUrl { get; set; }
-  
+
     DateTime date = DateTime.TryParse(d, out date) ? date.Date : DateTime.Now.Date;
     var nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
     var youtubeApiKey = Configuration.GetSection("ApiKeys")["Youtube"];
     var nasaApiUrl =
         $"https://api.nasa.gov/planetary/apod?api_key={nasaApiKey}&date={date.ToString("yyyy-MM-dd")}";
     var youtubeApiUrl = $"https://www.googleapis.com/youtube/v3/videos?key={youtubeApiKey}&part=snippet";
-  
+
     var httpClient = new HttpClient();
     httpClient.BaseAddress = new Uri(Request.GetDisplayUrl());
-  
+
     // Sucht nach einem Datenbankeintrag des heutigen Datums in der Tabelle Apod und füllt den Inhalt in das Apod Objekt.
     Apod = await _context.Apod.FirstOrDefaultAsync(a => a.Date == date);
-  
+
     if (Apod == null)
     {
         try
         {
             // Läd das JSON-Objekt mit den Informationen über das APOD von den Nasaservern.
             Apod = await httpClient.GetFromJsonAsync<Apod>(nasaApiUrl);
-  
+
             if (Apod.Media_Type == "video")
             {
                 var url = youtubeApiUrl + "&id=" + Regex.Match(Apod.Url, @"(?<=embed/)\w+").Value;
@@ -56,9 +45,9 @@ public string PictureUrl { get; set; }
                 var thumbnails = video["items"][0]["snippet"]["thumbnails"].ToObject<YoutubeThumbnails>();
                 Apod.Url = GetThumbnailUrl(thumbnails);
             }
-  
+
             PictureUrl = Apod.Url;
-  
+
             Apod.LocalUrl = "apod/" + GetImageFileName();
             _context.Add(Apod);
             var v = await _context.SaveChangesAsync();
@@ -84,21 +73,20 @@ public string PictureUrl { get; set; }
             SavePicture(httpClient);
         }
     }
-  
+
     PictureUrl = PictureUrl.Replace("'", @"%27");
     _logger.LogInformation("Seite wird geladen");
-  
+
     return Page();
 ```
-  
-###  Funktionen
-  
-  
+
+### Funktionen
+
 ```csharp
 private string GetImageFileName()
 {
     var imageFileName = "";
-  
+
     try
     {
         imageFileName =
@@ -108,10 +96,10 @@ private string GetImageFileName()
     {
         _logger.LogWarning("Name der Bilddatei kann nicht generiert werden");
     }
-  
+
     return imageFileName;
 }
-  
+
 private async void SavePicture(HttpClient httpClient)
 {
     var picture = await (await httpClient.GetAsync(Apod.Url)).Content.ReadAsByteArrayAsync();
@@ -120,7 +108,7 @@ private async void SavePicture(HttpClient httpClient)
     await System.IO.File.WriteAllBytesAsync(fullPath, picture);
     _logger.LogInformation("Bild gespeichert");
 }
-  
+
 private string GetThumbnailUrl(YoutubeThumbnails thumbnails)
 {
     if (thumbnails.MaxRes != null) return thumbnails.MaxRes.Url;
@@ -130,4 +118,3 @@ private string GetThumbnailUrl(YoutubeThumbnails thumbnails)
     return thumbnails.Default.Url;
 }
 ```
-  
