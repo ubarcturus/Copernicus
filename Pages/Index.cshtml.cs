@@ -1,11 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
+﻿using Copernicus_Weather.Data;
+using Copernicus_Weather.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
-using Copernicus_Weather.Data;
-using Copernicus_Weather.Models;
-
 using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Copernicus_Weather.Pages
 {
@@ -35,10 +32,10 @@ namespace Copernicus_Weather.Pages
         }
 
         private IConfiguration Configuration { get; }
-        private Copernicus_WeatherContext _context { get; set; }
+        private Copernicus_WeatherContext _context { get; }
 
         private Apod Apod { get; set; }
-        public bool FavoredByCurrentUser { get; set; }
+        public bool FavoredByCurrentUser { get; private set; }
         public string PictureUrl { get; private set; }
         public int ApodId { get; private set; }
 
@@ -48,9 +45,9 @@ namespace Copernicus_Weather.Pages
             var httpClient = new HttpClient { BaseAddress = new Uri(Request.GetDisplayUrl()) };
 
             // Sucht nach einem Datenbankeintrag des heutigen Datums in der Tabelle Apod und füllt den Inhalt in das Apod Objekt.
-            Apod = await _context.Apod.Include(t => t.FavoredByUsers).FirstOrDefaultAsync(a => a.Date == date);
+            Apod = await _context.Apod.Include(apod => apod.FavoredByUsers).FirstOrDefaultAsync(apod => apod.Date == date);
             string userId = await GetUserId();
-            FavoredByCurrentUser = Apod != null && Apod.FavoredByUsers.Any(i => userId == i.IdentityUserId);
+            FavoredByCurrentUser = Apod != null && Apod.FavoredByUsers.Any(userApod => userId == userApod.IdentityUserId);
 
             if (Apod != null && (await httpClient.GetAsync(Apod.LocalUrl)).IsSuccessStatusCode) { PictureUrl = Apod.LocalUrl; }
             else
@@ -97,7 +94,6 @@ namespace Copernicus_Weather.Pages
         }
         public async Task<JsonResult> OnPostAddToFavoritesAsync([FromBody] string apodId)
         {
-            int changes = 0;
             UserApod userApod = new UserApod
 
             {
@@ -109,6 +105,7 @@ namespace Copernicus_Weather.Pages
             {
                 return new JsonResult("You are not logged in");
             }
+            int changes = 0;
             try
             {
                 await _context.UserApod.AddAsync(userApod);

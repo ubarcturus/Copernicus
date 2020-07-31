@@ -9,6 +9,7 @@
         background-position: center;
         background-size: cover;
     }
+
     .alert {
         display: none;
     }
@@ -20,12 +21,12 @@
 </div>
 
 <div class="alert alert-success" role="alert">
-  This is a success alert—check it out!
+    This is a success alert—check it out!
 </div>
 
 @if (!Model.FavoredByCurrentUser)
 {
-    <button class="btn btn-primary addToFavorites" type="submit">Add to favorites</button>
+<button class="btn btn-primary addToFavorites" type="submit">Add to favorites</button>
 }
 
 @Html.AntiForgeryToken()
@@ -33,10 +34,9 @@
 <input type="hidden" class="apodId" value="@(Model.ApodId)">
 
 <script>
-    var addToFavoritesButton = document.querySelector('.addToFavorites')
-    addToFavoritesButton.addEventListener('click', addToFavorites);
+    var addToFavoritesButton = document.querySelector('.addToFavorites');
     var apodId = document.querySelector('.apodId').value;
-
+    addToFavoritesButton.addEventListener('click', addToFavorites);
     async function addToFavorites() {
         const url = '/?handler=addToFavorites';
         const response = await fetch(url, {
@@ -44,25 +44,22 @@
             headers: {
                 'RequestVerificationToken': document.querySelector(
                     'input[name="__RequestVerificationToken"]').value,
-                    'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(apodId)
         });
-        
-        response.json().then(v => 
-        {
-            console.log(v);
-            if (v = 1)
-            {
+        response.json().then(numberOfChanges => {
+            console.log(numberOfChanges);
+            if (numberOfChanges === 1) {
                 addToFavoritesButton.style.display = 'none';
-                var alert = document.querySelector('.alert')
+                var alert = document.querySelector('.alert');
                 alert.style.display = 'block';
-                setTimeout(() => {alert.style.display = 'none'}, 3000);
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 3000);
             }
-        }
-        );
+        });
     }
-
 </script>
 
 @* <iframe width="420" height="315" src="https://www.youtube.com/embed/UJfpqSj7cCs?rel=0" allow="autoplay; encrypted-media"
