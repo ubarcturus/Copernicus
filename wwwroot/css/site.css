@@ -2,64 +2,102 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-    text-align: center;
-    white-space: normal;
-    word-break: break-all;
+  text-align: center;
+  white-space: normal;
+  word-break: break-all;
 }
 
 /* Provide sufficient contrast against white background */
 
-a { color: #0366d6; }
+a {
+  color: #0366d6;
+}
 
 .btn-primary {
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-    color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+  color: #fff;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-    color: #fff;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-
-html { font-size: 14px; }
-
-@media (min-width: 768px) {
-    html { font-size: 16px; }
-}
-
-.border-top { border-top: 1px solid #e5e5e5; }
-
-.border-bottom { border-bottom: 1px solid #e5e5e5; }
-
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
-
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+  color: #fff;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 
 html {
-    min-height: 100%;
-    position: relative;
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html {
+  min-height: 100%;
+  position: relative;
 }
 
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
 }
 
 .footer {
-    bottom: 0;
-    line-height: 60px; /* Vertically center the text there */
-    position: absolute;
-    white-space: nowrap;
-    width: 100%;
+  bottom: 0;
+  line-height: 60px; /* Vertically center the text there */
+  position: absolute;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* New CSS
+-------------------------------------------------- */
+
+.flex-container {
+  display: flex;
+  flex-flow: row wrap;
+  /* justify-content: center; */
+  align-items: flex-start;
+  align-content: flex-start;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1200px;
+}
+.flex-item {
+  list-style: none;
+  margin: 0.2rem auto;
+}
+.description-max-height {
+  max-height: 10rem;
+  overflow: auto;
+}
+.hd-image:hover {
+  opacity: 0.5;
 }

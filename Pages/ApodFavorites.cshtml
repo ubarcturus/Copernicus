@@ -5,16 +5,20 @@
     ViewData["Title"] = "ApodFavorites";
 }
 
-<h1>ApodFavorites</h1>
-
-@foreach (var apod in Model.ApodList)
-{
-<div class="card" style="width: 18rem;">
-    <img class="card-img-top" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day">
-    <div class="card-body">
-        <h5 class="card-title">@(apod.Title)</h5>
-        <p class="card-text">@(apod.Explanation)</p>
-        <a href="@(apod.HdUrl)" class="btn btn-primary">HD Image</a>
-    </div>
+<div class="text-center">
+    <h1 class="display-4">ApodFavorites</h1>
 </div>
-}
+
+<div class="flex-container">
+    @foreach (var apod in Model.ApodList)
+    {
+    <div class="card flex-item" style="width: 18rem;">
+        <a href="@(apod.HdUrl)"><img class="card-img-top hd-image" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day"></a>
+        <div class="card-body">
+            <h5 class="card-title">@(apod.Title)</h5>
+            <p class="card-text description-max-height">@(apod.Explanation)</p>
+            <a href="@(apod.HdUrl)" class="btn btn-primary">HD Image</a>
+        </div>
+    </div>
+    }
+</div>
