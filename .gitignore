@@ -350,5 +350,5 @@ MigrationBackup/
 .ionide/
 
 # Workspace related items
-/wwwroot/apod/*.jpg
+/wwwroot/apod/
 /.vscode

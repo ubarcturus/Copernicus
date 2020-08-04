@@ -16,6 +16,7 @@ namespace Copernicus_Weather.Models
         public string Url { get; set; }
         public string HdUrl { get; set; }
         public string LocalUrl { get; set; }
+        public string LocalHdUrl { get; set; }
         [DataType(DataType.Date)] public DateTime Date { get; set; }
         public List<UserApod> FavoredByUsers { get; set; }
     }

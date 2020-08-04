@@ -13,11 +13,14 @@
     @foreach (var apod in Model.ApodList)
     {
     <div class="card flex-item" style="width: 18rem;">
-        <a href="@(apod.HdUrl)"><img class="card-img-top hd-image" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day"></a>
+        <a href="@(apod.LocalHdUrl)" class="image-container">
+            <img class="card-img-top opacity" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day">
+            <p class="hidden center">Show HD Image</p>
+        </a>
         <div class="card-body">
             <h5 class="card-title">@(apod.Title)</h5>
             <p class="card-text description-max-height">@(apod.Explanation)</p>
-            <a href="@(apod.HdUrl)" class="btn btn-primary">HD Image</a>
+            <a href="@(apod.LocalHdUrl)" download class="btn btn-primary">Download HD Image</a>
         </div>
     </div>
     }

@@ -34,7 +34,7 @@ namespace Copernicus_Weather.Pages
         private IConfiguration Configuration { get; }
         private Copernicus_WeatherContext _context { get; }
 
-        private Apod Apod { get; set; }
+        public Apod Apod { get; private set; }
         public bool FavoredByCurrentUser { get; private set; }
         public string PictureUrl { get; private set; }
         public int ApodId { get; private set; }
@@ -78,10 +78,11 @@ namespace Copernicus_Weather.Pages
 
                     // 
                     Apod.LocalUrl = "apod/" + GetImageFileName();
+                    Apod.LocalHdUrl = Apod.Media_Type == "image" ? "apod/hd_images/" + GetImageFileName() : Apod.LocalUrl;
                     await _context.Apod.AddAsync(Apod);
                     int changes = await _context.SaveChangesAsync();
                     _logger.LogInformation(changes + " Datenbankänderungen gespeichert");
-                    SavePicture(httpClient);
+                    SavePictureAsync(httpClient);
                 }
                 catch (Exception e) { _logger.LogWarning(e.Message); }
             };
@@ -137,12 +138,20 @@ namespace Copernicus_Weather.Pages
             return imageFileName;
         }
 
-        private async void SavePicture(HttpClient httpClient)
+        private async void SavePictureAsync(HttpClient httpClient)
         {
             byte[] picture = await (await httpClient.GetAsync(Apod.Url)).Content.ReadAsByteArrayAsync();
             string directoryPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/wwwroot/apod/").FullName;
             string fullPath = Path.Combine(directoryPath, GetImageFileName());
             await System.IO.File.WriteAllBytesAsync(fullPath, picture);
+
+            if (Apod.Media_Type == "image")
+            {
+                byte[] hdPicture = await (await httpClient.GetAsync(Apod.HdUrl)).Content.ReadAsByteArrayAsync();
+                string hdDirectoryPath = Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/wwwroot/apod/hd_images/").FullName;
+                string hdFullPath = Path.Combine(hdDirectoryPath, GetImageFileName());
+                await System.IO.File.WriteAllBytesAsync(hdFullPath, hdPicture);
+            }
             _logger.LogInformation("Bild gespeichert");
         }
 

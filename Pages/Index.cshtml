@@ -5,9 +5,16 @@
 }
 <style>
     body {
-        background-image: url(@Model.PictureUrl);
         background-position: center;
         background-size: cover;
+        background-image: url(@Model.PictureUrl);
+        opacity: 0.2;
+    }
+
+    html:hover body {
+        opacity: 1;
+        background-color: rgba(238, 238, 238, 0.7) !important;
+        background-blend-mode: color;
     }
 
     .alert {
@@ -17,20 +24,19 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>@(Model.Apod.Explanation)</p>
 </div>
-
-<div class="alert alert-success" role="alert">
-    This is a success alert—check it out!
+<div class="alert alert-success text-center" role="alert">
+    Picture successful added to your favorites.
 </div>
-
-@if (!Model.FavoredByCurrentUser)
-{
-<button class="btn btn-primary addToFavorites" type="submit">Add to favorites</button>
-}
-
+<div class="flex-container">
+    @if (!Model.FavoredByCurrentUser)
+    {
+    <button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
+    }
+    <a href="@(Model.Apod.LocalHdUrl)" class="flex-item"><button class="btn btn-primary">Show HD Image</button></a>
+</div>
 @Html.AntiForgeryToken()
-
 <input type="hidden" class="apodId" value="@(Model.ApodId)">
 
 <script>

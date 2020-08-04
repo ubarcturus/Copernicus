@@ -8,6 +8,8 @@ namespace Copernicus_Weather.Models.Data
     {
         [Display(Name = "Day of the year")] public string DayOfTheYear { get; set; }
 
+        [Display(Name = "Earth day")] public DateTime FirstUtc { get; set; }
+
         [Display(Name = "temperature")] public SolValues AtmosphericTemperature { get; set; }
 
         [Display(Name = "wind speed")] public SolValues HorizontalWindSpeed { get; set; }
@@ -22,6 +24,7 @@ namespace Copernicus_Weather.Models.Data
                 return new Sol
                 {
                     DayOfTheYear = v.Key,
+                    FirstUtc = v.Value.GetProperty("First_UTC").GetString(),
                     AtmosphericTemperature = v.Value.GetProperty("AT"),
                     HorizontalWindSpeed = v.Value.GetProperty("HWS"),
                     Pressure = v.Value.GetProperty("PRE"),
