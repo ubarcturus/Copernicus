@@ -36,8 +36,12 @@ namespace Copernicus_Weather.Pages
             Days = new List<Sol>();
 
             foreach (var day in response)
+            {
                 if ((Sol)day != null)
+                {
                     Days.Add(day);
+                }
+            }
 
             return Page();
         }

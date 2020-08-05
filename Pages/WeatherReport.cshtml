@@ -16,7 +16,7 @@
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].DayOfTheYear)</th>
-            <th>Earth Day</th>
+            <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].FirstUtc)</th>
             <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].AtmosphericTemperature)</th>
             <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].HorizontalWindSpeed)</th>
             <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].Season)</th>
@@ -26,19 +26,11 @@
         @foreach (var sol in Model.Days)
         {
         <tr>
-            <td>
-                Sol @(sol.DayOfTheYear)
-            </td>
-            @* <td>@(sol.) </td> *@
-            <td>
-                @(sol.AtmosphericTemperature.Average) °C
-            </td>
-            <td>
-                @(sol.HorizontalWindSpeed.Average) m/s
-            </td>
-            <td>
-                @(sol.Season)
-            </td>
+            <td>Sol @(sol.DayOfTheYear)</td>
+            <td>@(sol.FirstUtc.ToShortDateString())</td>
+            <td>@(sol.AtmosphericTemperature.Average) °C</td>
+            <td>@(sol.HorizontalWindSpeed.Average) m/s</td>
+            <td>@(sol.Season)</td>
         </tr>
         }
     </tbody>

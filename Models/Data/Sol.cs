@@ -8,27 +8,28 @@ namespace Copernicus_Weather.Models.Data
     {
         [Display(Name = "Day of the year")] public string DayOfTheYear { get; set; }
 
-        [Display(Name = "Earth day")] public DateTime FirstUtc { get; set; }
+        [Display(Name = "Earth day")] [DataType(DataType.Date)] public DateTime FirstUtc { get; set; }
 
         [Display(Name = "temperature")] public SolValues AtmosphericTemperature { get; set; }
 
         [Display(Name = "wind speed")] public SolValues HorizontalWindSpeed { get; set; }
 
-        public SolValues Pressure { get; set; }
+        private SolValues Pressure { get; set; }
         public string Season { get; set; }
 
-        public static implicit operator Sol(KeyValuePair<string, dynamic> v)
+        public static implicit operator Sol(KeyValuePair<string, dynamic> keyValuePair)
         {
             try
             {
+                var (key, value) = keyValuePair;
                 return new Sol
                 {
-                    DayOfTheYear = v.Key,
-                    FirstUtc = v.Value.GetProperty("First_UTC").GetString(),
-                    AtmosphericTemperature = v.Value.GetProperty("AT"),
-                    HorizontalWindSpeed = v.Value.GetProperty("HWS"),
-                    Pressure = v.Value.GetProperty("PRE"),
-                    Season = v.Value.GetProperty("Season").GetString()
+                    DayOfTheYear = key,
+                    AtmosphericTemperature = value.GetProperty("AT"),
+                    FirstUtc = value.GetProperty("First_UTC").GetDateTime(),
+                    HorizontalWindSpeed = value.GetProperty("HWS"),
+                    Pressure = value.GetProperty("PRE"),
+                    Season = value.GetProperty("Season").GetString()
                 };
             }
             catch (Exception)
