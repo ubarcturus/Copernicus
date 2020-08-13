@@ -11,10 +11,11 @@ namespace Copernicus_Weather.Models
         public string Title { get; set; }
         public string Explanation { get; set; }
         public string Copyright { get; set; }
-        [NotMapped] public string Media_Type { get; set; }
+        public string Media_Type { get; set; }
         [NotMapped] public string Service_Version { get; set; }
         public string Url { get; set; }
         public string HdUrl { get; set; }
+        public string ImageFileName { get; set; }
         public string LocalUrl { get; set; }
         public string LocalHdUrl { get; set; }
         [DataType(DataType.Date)] public DateTime Date { get; set; }

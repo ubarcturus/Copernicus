@@ -27,7 +27,8 @@ namespace Copernicus_Weather.Pages
             string userId = (await _userManager.GetUserAsync(User))?.Id;
             ApodList = await _context.Apod
                 .Include(apod => apod.FavoredByUsers)
-                .Where(apod => apod.FavoredByUsers.Any(userApod => userId == userApod.IdentityUserId))
+                .Where(apod => apod.FavoredByUsers
+                    .Any(userApod => userId == userApod.IdentityUserId))
                 .ToListAsync();
         }
     }

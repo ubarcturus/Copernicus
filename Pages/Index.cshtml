@@ -30,18 +30,17 @@
     Picture successful added to your favorites.
 </div>
 <div class="flex-container">
-    @if (!Model.FavoredByCurrentUser)
-    {
+    @if (!Model.FavoredByCurrentUser) {
     <button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
     }
-    <a href="@(Model.Apod.LocalHdUrl)" class="flex-item"><button class="btn btn-primary">Show HD Image</button></a>
+    <button class="btn btn-primary showHdImage flex-item">Show HD Image</button>
 </div>
 @Html.AntiForgeryToken()
-<input type="hidden" class="apodId" value="@(Model.ApodId)">
+<input type="hidden" class="apod-id" value="@(Model.ApodId)" />
 
 <script>
     var addToFavoritesButton = document.querySelector('.addToFavorites');
-    var apodId = document.querySelector('.apodId').value;
+    var apodId = document.querySelector('.apod-id').value;
     addToFavoritesButton.addEventListener('click', addToFavorites);
     async function addToFavorites() {
         const url = '/?handler=addToFavorites';
@@ -63,6 +62,19 @@
                 setTimeout(() => {
                     alert.style.display = 'none';
                 }, 3000);
+            }
+        });
+    }
+
+    var showHdImageButton = document.querySelector('.showHdImage').addEventListener('click', showHdImage);
+    async function showHdImage() {
+        const url = '/?handler=showHdImage';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': document.querySelector(
+                    'input[name="__RequestVerificationToken"]').value,
+                'Content-Type': 'application/json'
             }
         });
     }
