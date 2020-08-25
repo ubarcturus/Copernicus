@@ -1,85 +1,95 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+	ViewData["Title"] = "Home page";
 }
 <style>
-    body {
-        background-position: center;
-        background-size: cover;
-        background-image: url(@Model.PictureUrl);
-        opacity: 0.2;
-    }
+	body {
+		background-image: url(@Model.PictureUrl);
+		background-position: center;
+		background-size: cover;
+		opacity: 0.2;
+	}
 
-    html:hover body {
-        opacity: 1;
-        background-color: rgba(238, 238, 238, 0.7) !important;
-        background-blend-mode: color;
-    }
+	html:hover body {
+		background-blend-mode: color;
+		background-color: rgba(215, 215, 215, 0.85) !important;
+		opacity: 1;
+	}
 
-    .alert {
-        display: none;
-    }
+	.alert { display: none; }
 </style>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>@(Model.Apod.Explanation)</p>
+	<h1 class="display-4">Welcome</h1>
+	<p>@(Model.Apod.Explanation)</p>
 </div>
 <div class="alert alert-success text-center" role="alert">
-    Picture successful added to your favorites.
+	Picture successful added to your favorites.
 </div>
 <div class="flex-container">
-    @if (!Model.FavoredByCurrentUser) {
-    <button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
-    }
-    <button class="btn btn-primary showHdImage flex-item">Show HD Image</button>
+	@if (!Model.FavoredByCurrentUser)
+	{
+		<button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
+	}
+	<button class="btn btn-primary showHdImage flex-item">Show HD Image</button>
 </div>
 @Html.AntiForgeryToken()
-<input type="hidden" class="apod-id" value="@(Model.ApodId)" />
+<input type="hidden" class="apod-id" value="@(Model.ApodId)"/>
 
 <script>
-    var addToFavoritesButton = document.querySelector('.addToFavorites');
-    var apodId = document.querySelector('.apod-id').value;
-    addToFavoritesButton.addEventListener('click', addToFavorites);
-    async function addToFavorites() {
-        const url = '/?handler=addToFavorites';
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'RequestVerificationToken': document.querySelector(
-                    'input[name="__RequestVerificationToken"]').value,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(apodId)
-        });
-        response.json().then(numberOfChanges => {
-            console.log(numberOfChanges);
-            if (numberOfChanges === 1) {
-                addToFavoritesButton.style.display = 'none';
-                var alert = document.querySelector('.alert');
-                alert.style.display = 'block';
-                setTimeout(() => {
-                    alert.style.display = 'none';
-                }, 3000);
-            }
-        });
-    }
+	const addToFavoritesButton = document
+		.querySelector('.addToFavorites')
+		.addEventListener('click', addToFavorites);
+	const apodId = document.querySelector('.apod-id').value;
 
-    var showHdImageButton = document.querySelector('.showHdImage').addEventListener('click', showHdImage);
-    async function showHdImage() {
-        const url = '/?handler=showHdImage';
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'RequestVerificationToken': document.querySelector(
-                    'input[name="__RequestVerificationToken"]').value,
-                'Content-Type': 'application/json'
-            }
-        });
-    }
+	async function addToFavorites() {
+		const url = '/?handler=addToFavorites';
+		const response = await fetch(url,
+			{
+				method: 'POST',
+				headers: {
+					RequestVerificationToken: document.querySelector(
+						'input[name="__RequestVerificationToken"]'
+					).value,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(apodId)
+			});
+
+		response.json().then((numberOfChanges) => {
+			console.log(numberOfChanges);
+			if (numberOfChanges === 1) {
+				addToFavoritesButton.style.display = 'none';
+				const alert = document.querySelector('.alert');
+				alert.style.display = 'block';
+				setTimeout(() => {
+						alert.style.display = 'none';
+					},
+					3000);
+			}
+		});
+	}
+
+	const showHdImageButton = document
+		.querySelector('.showHdImage')
+		.addEventListener('click', showHdImage);
+
+	async function showHdImage() {
+		const url = '/?handler=showHdImage';
+		const response = await fetch(url,
+			{
+				method: 'GET',
+				headers: {
+					RequestVerificationToken: document.querySelector(
+						'input[name="__RequestVerificationToken"]'
+					).value,
+					'Content-Type': 'text/plain'
+				}
+			});
+	}
 </script>
 
 @* <iframe width="420" height="315" src="https://www.youtube.com/embed/UJfpqSj7cCs?rel=0" allow="autoplay; encrypted-media"
-    allowfullscreen>
+	allowfullscreen>
 </iframe> *@

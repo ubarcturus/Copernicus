@@ -1,5 +1,9 @@
-﻿using Copernicus_Weather.Areas.Identity;
+﻿#region
+
+using Copernicus_Weather.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
+
+#endregion
 
 [assembly: HostingStartup(typeof(IdentityHostingStartup))]
 

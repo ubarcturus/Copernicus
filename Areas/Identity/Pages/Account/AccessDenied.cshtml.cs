@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿#region
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account
 {

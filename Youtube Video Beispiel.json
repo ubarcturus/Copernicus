@@ -10,7 +10,8 @@
         "publishedAt": "2020-06-12T19:41:43Z",
         "channelId": "UCJ2_7jfhB2Jvr4foBoOhO1g",
         "title": "A Ring of Fire Sunrise Solar Eclipse",
-        "description": "Photography & Editing: Colin Legg\nPhotography: Geoff Sims\nMusic: Peter Nanasi\nDetails: https://apod.nasa.gov/apod/ap200615.html",
+        "description":
+          "Photography & Editing: Colin Legg\nPhotography: Geoff Sims\nMusic: Peter Nanasi\nDetails: https://apod.nasa.gov/apod/ap200615.html",
         "thumbnails": {
           "default": {
             "url": "https://i.ytimg.com/vi/UJfpqSj7cCs/default.jpg",
@@ -44,7 +45,8 @@
         "liveBroadcastContent": "none",
         "localized": {
           "title": "A Ring of Fire Sunrise Solar Eclipse",
-          "description": "Photography & Editing: Colin Legg\nPhotography: Geoff Sims\nMusic: Peter Nanasi\nDetails: https://apod.nasa.gov/apod/ap200615.html"
+          "description":
+            "Photography & Editing: Colin Legg\nPhotography: Geoff Sims\nMusic: Peter Nanasi\nDetails: https://apod.nasa.gov/apod/ap200615.html"
         }
       }
     }

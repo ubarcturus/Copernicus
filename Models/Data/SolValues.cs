@@ -1,5 +1,9 @@
+#region
+
 using System;
 using System.Text.Json;
+
+#endregion
 
 namespace Copernicus_Weather.Models.Data
 {

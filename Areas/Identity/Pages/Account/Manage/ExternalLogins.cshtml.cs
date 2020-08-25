@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 {
@@ -32,7 +36,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            IdentityUser user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound("Unable to load user with ID 'user.Id'.");
 
             CurrentLogins = await _userManager.GetLoginsAsync(user);
@@ -45,10 +49,10 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
         {
-            var user = await _userManager.GetUserAsync(User);
+            IdentityUser user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound("Unable to load user with ID 'user.Id'.");
 
-            var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
+            IdentityResult result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
             {
                 StatusMessage = "The external login was not removed.";
@@ -66,8 +70,8 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             // Request a redirect to the external login provider to link a login for the current user
-            var redirectUrl = Url.Page("./ExternalLogins", "LinkLoginCallback");
-            var properties =
+            string redirectUrl = Url.Page("./ExternalLogins", "LinkLoginCallback");
+            AuthenticationProperties properties =
                 _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl,
                     _userManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
@@ -75,15 +79,15 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetLinkLoginCallbackAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            IdentityUser user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound("Unable to load user with ID 'user.Id'.");
 
-            var info = await _signInManager.GetExternalLoginInfoAsync(user.Id);
+            ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync(user.Id);
             if (info == null)
                 throw new InvalidOperationException(
                     $"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
 
-            var result = await _userManager.AddLoginAsync(user, info);
+            IdentityResult result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
                 StatusMessage =

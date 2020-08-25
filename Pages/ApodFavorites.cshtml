@@ -1,4 +1,5 @@
 ﻿@page
+@using Copernicus_Weather.Models
 @model Copernicus_Weather.Pages.ApodFavoritesModel
 
 @{
@@ -10,19 +11,19 @@
 </div>
 
 <div class="flex-container">
-    @foreach (var apod in Model.ApodList)
+    @foreach (Apod apod in Model.ApodList)
     {
-    <div class="card flex-item" style="width: 18rem;">
-        <a href="@(apod.LocalHdUrl)" class="image-container">
-            <img class="card-img-top opacity" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day">
-            <p class="hidden center">Show HD Image</p>
-        </a>
-        <div class="card-body">
-            <h5 class="card-title">@(apod.Title)</h5>
-            <p class="card-text description-max-height">@(apod.Explanation)</p>
-            <a href="@(apod.LocalHdUrl)" download class="btn btn-primary">Download HD Image</a>
-            <button type="submit" class="btn btn-danger"></button>
+        <div class="card flex-item" style="width: 18rem;">
+            <a href="@(apod.LocalHdUrl)" class="image-container">
+                <img class="card-img-top opacity" src="@(apod.LocalUrl)" alt="Astronomy Picture of the Day">
+                <p class="hidden center">Show HD Image</p>
+            </a>
+            <div class="card-body">
+                <h5 class="card-title">@(apod.Title)</h5>
+                <p class="card-text description-max-height">@(apod.Explanation)</p>
+                <a href="@(apod.LocalHdUrl)" download class="btn btn-primary">Download HD Image</a>
+                <button type="submit" class="btn btn-danger"></button>
+            </div>
         </div>
-    </div>
     }
 </div>

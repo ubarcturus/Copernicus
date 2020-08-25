@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#endregion
 
 namespace Copernicus_Weather.Migrations
 {
@@ -7,26 +11,26 @@ namespace Copernicus_Weather.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_UserApod_AspNetUsers_IdentityUserId",
-                table: "UserApod");
+                "FK_UserApod_AspNetUsers_IdentityUserId",
+                "UserApod");
 
             migrationBuilder.AddColumn<string>(
-                name: "LocalHdUrl",
-                table: "Apod",
+                "LocalHdUrl",
+                "Apod",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "LocalHdUrl",
-                table: "Apod");
+                "LocalHdUrl",
+                "Apod");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_UserApod_AspNetUsers_IdentityUserId",
-                table: "UserApod",
-                column: "IdentityUserId",
-                principalTable: "AspNetUsers",
+                "FK_UserApod_AspNetUsers_IdentityUserId",
+                "UserApod",
+                "IdentityUserId",
+                "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }

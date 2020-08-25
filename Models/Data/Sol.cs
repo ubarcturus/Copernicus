@@ -1,6 +1,10 @@
+#region
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
+#endregion
 
 namespace Copernicus_Weather.Models.Data
 {
@@ -8,7 +12,9 @@ namespace Copernicus_Weather.Models.Data
     {
         [Display(Name = "Day of the year")] public string DayOfTheYear { get; set; }
 
-        [Display(Name = "Earth day")] [DataType(DataType.Date)] public DateTime FirstUtc { get; set; }
+        [Display(Name = "Earth day")]
+        [DataType(DataType.Date)]
+        public DateTime FirstUtc { get; set; }
 
         [Display(Name = "temperature")] public SolValues AtmosphericTemperature { get; set; }
 
@@ -21,7 +27,7 @@ namespace Copernicus_Weather.Models.Data
         {
             try
             {
-                var (key, value) = keyValuePair;
+                (string key, dynamic value) = keyValuePair;
                 return new Sol
                 {
                     DayOfTheYear = key,

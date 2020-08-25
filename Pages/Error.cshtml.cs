@@ -1,7 +1,11 @@
+#region
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace Copernicus_Weather.Pages
 {
@@ -15,7 +19,7 @@ namespace Copernicus_Weather.Pages
             _logger = logger;
         }
 
-        public string RequestId { get; set; }
+        public string RequestId { get; private set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 

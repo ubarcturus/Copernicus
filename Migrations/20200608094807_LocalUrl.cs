@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#endregion
 
 namespace Copernicus_Weather.Migrations
 {

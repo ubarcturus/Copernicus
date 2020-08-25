@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿#region
+
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account
 {
@@ -31,7 +35,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
         {
             if (email == null) return RedirectToPage("/Index");
 
-            var user = await _userManager.FindByEmailAsync(email);
+            IdentityUser user = await _userManager.FindByEmailAsync(email);
             if (user == null) return NotFound($"Unable to load user with email '{email}'.");
 
             Email = email;
@@ -39,8 +43,8 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
             DisplayConfirmAccountLink = true;
             if (DisplayConfirmAccountLink)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string userId = await _userManager.GetUserIdAsync(user);
+                string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 EmailConfirmationUrl = Url.Page(
                     "/Account/ConfirmEmail",

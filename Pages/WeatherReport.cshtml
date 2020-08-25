@@ -1,4 +1,5 @@
 ﻿@page
+@using Copernicus_Weather.Models.Data
 @model Copernicus_Weather.Pages.WeatherReportModel
 
 @{
@@ -14,17 +15,17 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].DayOfTheYear)</th>
-            <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].FirstUtc)</th>
-            <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].AtmosphericTemperature)</th>
-            <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].HorizontalWindSpeed)</th>
-            <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].Season)</th>
-        </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].DayOfTheYear)</th>
+        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].FirstUtc)</th>
+        <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].AtmosphericTemperature)</th>
+        <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].HorizontalWindSpeed)</th>
+        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].Season)</th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var sol in Model.Days)
-        {
+    @foreach (Sol sol in Model.Days)
+    {
         <tr>
             <td>Sol @(sol.DayOfTheYear)</td>
             <td>@(sol.FirstUtc.ToShortDateString())</td>
@@ -32,6 +33,6 @@
             <td>@(sol.HorizontalWindSpeed.Average) m/s</td>
             <td>@(sol.Season)</td>
         </tr>
-        }
+    }
     </tbody>
 </table>

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿#region
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace Copernicus_Weather.Pages
 {

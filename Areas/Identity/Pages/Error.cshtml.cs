@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿#region
+
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages
 {

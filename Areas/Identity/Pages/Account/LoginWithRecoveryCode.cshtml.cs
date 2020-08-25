@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account
 {
@@ -29,7 +34,7 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             // Ensure the user has gone through the username & password screen first
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            IdentityUser user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
             ReturnUrl = returnUrl;
@@ -41,12 +46,12 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
         {
             if (!ModelState.IsValid) return Page();
 
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            IdentityUser user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
-            var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
+            string recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
 
-            var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+            SignInResult result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
 
             if (result.Succeeded)
             {

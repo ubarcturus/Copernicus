@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#region
+
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account
 {
@@ -36,15 +40,15 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account
         {
             if (!ModelState.IsValid) return Page();
 
-            var user = await _userManager.FindByEmailAsync(Input.Email);
+            IdentityUser user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
                 // Don't reveal that the user does not exist
                 return RedirectToPage("./ResetPasswordConfirmation");
 
-            var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+            IdentityResult result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if (result.Succeeded) return RedirectToPage("./ResetPasswordConfirmation");
 
-            foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
+            foreach (IdentityError error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
 
             return Page();
         }

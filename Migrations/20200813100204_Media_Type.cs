@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#region
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#endregion
 
 namespace Copernicus_Weather.Migrations
 {
@@ -7,16 +11,16 @@ namespace Copernicus_Weather.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Media_Type",
-                table: "Apod",
+                "Media_Type",
+                "Apod",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Media_Type",
-                table: "Apod");
+                "Media_Type",
+                "Apod");
         }
     }
 }

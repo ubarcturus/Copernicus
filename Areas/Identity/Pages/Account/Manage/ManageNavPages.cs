@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+
+#endregion
 
 namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 {
@@ -64,8 +68,8 @@ namespace Copernicus_Weather.Areas.Identity.Pages.Account.Manage
 
         private static string PageNavClass(ViewContext viewContext, string page)
         {
-            var activePage = viewContext.ViewData["ActivePage"] as string
-                             ?? Path.GetFileNameWithoutExtension(viewContext.ActionDescriptor.DisplayName);
+            string activePage = viewContext.ViewData["ActivePage"] as string
+                                ?? Path.GetFileNameWithoutExtension(viewContext.ActionDescriptor.DisplayName);
             return string.Equals(activePage, page, StringComparison.OrdinalIgnoreCase) ? "active" : null;
         }
     }

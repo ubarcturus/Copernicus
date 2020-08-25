@@ -2,129 +2,121 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-  text-align: center;
-  white-space: normal;
-  word-break: break-all;
+    text-align: center;
+    white-space: normal;
+    word-break: break-all;
 }
 
 /* Provide sufficient contrast against white background */
 
-a {
-  color: #0366d6;
-}
+a { color: #0366d6; }
 
 .btn-primary {
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-  color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    color: #fff;
 }
 
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-  color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    color: #fff;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 
-html {
-  font-size: 14px;
-}
+html { font-size: 14px; }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html { font-size: 16px; }
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
+.border-top { border-top: 1px solid #e5e5e5; }
 
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
 
-.box-shadow {
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
-}
+.box-shadow { box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 
 html {
-  min-height: 100%;
-  position: relative;
+    min-height: 100%;
+    position: relative;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
 
 .footer {
-  bottom: 0;
-  line-height: 60px; /* Vertically center the text there */
-  position: absolute;
-  white-space: nowrap;
-  width: 100%;
+    bottom: 0;
+    line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    white-space: nowrap;
+    width: 100%;
 }
 
 /* CSS Flexbox
 -------------------------------------------------- */
 
 .flex-container {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-evenly;
-  margin: 0 auto;
-  padding: 0;
-  max-width: 1200px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0;
 }
+
 .flex-item {
-  list-style: none;
-  margin: 0.2rem auto;
+    list-style: none;
+    margin: 0.2rem auto;
 }
 
 /* CSS for ApodFavorites
 -------------------------------------------------- */
 
 .description-max-height {
-  max-height: 10rem;
-  overflow: auto;
+    max-height: 10rem;
+    overflow: auto;
 }
 
 .opacity {
-  opacity: 1;
-  transition: 0.5s ease;
+    opacity: 1;
+    transition: 0.5s ease;
 }
+
 a:hover .opacity {
-  opacity: 0.2;
-  transition: 0.5s ease;
+    opacity: 0.2;
+    transition: 0.5s ease;
 }
+
 .hidden {
-  opacity: 0;
-  transition: 0.5s ease;
+    opacity: 0;
+    transition: 0.5s ease;
 }
+
 a:hover .hidden {
-  opacity: 1;
-  transition: 0.5s ease;
+    opacity: 1;
+    transition: 0.5s ease;
 }
-.image-container {
-  position: relative;
-}
+
+.image-container { position: relative; }
+
 .center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 18px;
-  font-weight: bold;
+    font-size: 18px;
+    font-weight: bold;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
