@@ -53,7 +53,7 @@ namespace Copernicus_Weather
 			app.UseAuthentication();
 			app.UseAuthorization();
 
-			app.UseEndpoints(endpoints => { endpoints.MapRazorPages(); });
+			app.UseEndpoints(endpoints => endpoints.MapRazorPages());
 
 			// Seed DbContext
 			serviceProvider.GetService<Copernicus_WeatherContext>()

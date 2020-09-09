@@ -2,44 +2,36 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Copernicus_Weather.Data;
 using Copernicus_Weather.Models.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Copernicus_Weather.Pages
 {
-    public class WeatherReportModel : PageModel
-    {
-        private readonly ILogger<WeatherReportModel> _logger;
+	public class WeatherReportModel : PageModel
+	{
+		public WeatherReportModel(IConfiguration configuration)
+		{
+			Configuration = configuration;
+		}
 
-        public WeatherReportModel(ILogger<WeatherReportModel> logger, IConfiguration configuration,
-            Copernicus_WeatherContext context)
-        {
-            _logger = logger;
-            Configuration = configuration;
-        }
+		private IConfiguration Configuration { get; }
 
-        private IConfiguration Configuration { get; }
+		public List<Sol> Days { get; set; }
 
-        public List<Sol> Days { get; set; }
+		public async Task<PageResult> OnGetAsync()
+		{
+			string nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
+			string nasaUrl = $"https://api.nasa.gov/insight_weather/?api_key={nasaApiKey}&feedtype=json";
+			Days = new List<Sol>();
 
-        public async Task<PageResult> OnGetAsync()
-        {
-            string nasaApiKey = Configuration.GetSection("ApiKeys")["Nasa"];
-            string nasaUrl = $"https://api.nasa.gov/insight_weather/?api_key={nasaApiKey}&feedtype=json";
+			IDictionary<string, dynamic> response =
+				await new HttpClient().GetFromJsonAsync<IDictionary<string, dynamic>>(nasaUrl);
 
-            HttpClient httpClient = new HttpClient();
-            IDictionary<string, dynamic> response =
-                await httpClient.GetFromJsonAsync<IDictionary<string, dynamic>>(nasaUrl);
-            Days = new List<Sol>();
+			foreach (KeyValuePair<string, dynamic> day in response)
+				if ((Sol)day != null) Days.Add(day);
 
-            foreach (KeyValuePair<string, dynamic> day in response)
-                if ((Sol) day != null)
-                    Days.Add(day);
-
-            return Page();
-        }
-    }
+			return Page();
+		}
+	}
 }

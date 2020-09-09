@@ -1,7 +1,8 @@
-﻿@page
+﻿@* Ermöglicht den Parameter "urlDateParameter", anstatt als Parameter (?urlDateParameter=2020-06-18), als einfachen Wert (/2020-06-18) mit zu geben *@
+@page "{urlDateParameter:datetime?}"
 @model IndexModel
 @{
-	ViewData["Title"] = "Home page";
+		ViewData["Title"] = "Home page";
 }
 <style>
 	body {
@@ -24,69 +25,82 @@
 	<h1 class="display-4">Welcome</h1>
 	<p>@(Model.Apod.Explanation)</p>
 </div>
-<div class="alert alert-success text-center" role="alert">
-	Picture successful added to your favorites.
-</div>
+<div class="alert alert-success text-center" role="alert"></div>
+<div class="alert alert-warning text-center" role="alert"></div>
+<div class="alert alert-danger text-center" role="alert"></div>
 <div class="flex-container">
-	@if (!Model.FavoredByCurrentUser)
-	{
-		<button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
+	@if (!Model.FavoredByCurrentUser) {
+	<button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
 	}
 	<button class="btn btn-primary showHdImage flex-item">Show HD Image</button>
 </div>
 @Html.AntiForgeryToken()
-<input type="hidden" class="apod-id" value="@(Model.ApodId)"/>
+<input type="hidden" class="apod-id" value="@(Model.ApodId)" />
 
 <script>
-	const addToFavoritesButton = document
-		.querySelector('.addToFavorites')
-		.addEventListener('click', addToFavorites);
+	const addToFavoritesButton = document.querySelector('.addToFavorites');
+	if (addToFavoritesButton) {
+		addToFavoritesButton.addEventListener('click', addToFavorites);
+	}
+
 	const apodId = document.querySelector('.apod-id').value;
 
 	async function addToFavorites() {
 		const url = '/?handler=addToFavorites';
-		const response = await fetch(url,
-			{
-				method: 'POST',
-				headers: {
-					RequestVerificationToken: document.querySelector(
-						'input[name="__RequestVerificationToken"]'
-					).value,
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(apodId)
-			});
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				RequestVerificationToken: document.querySelector(
+					'input[name="__RequestVerificationToken"]'
+				).value,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(apodId)
+		});
 
-		response.json().then((numberOfChanges) => {
-			console.log(numberOfChanges);
-			if (numberOfChanges === 1) {
+		response.json().then((statusId) => {
+			let alert;
+			console.log(statusId);
+
+			if (statusId === 1) {
 				addToFavoritesButton.style.display = 'none';
-				const alert = document.querySelector('.alert');
+				alert = document.querySelector('.alert-success');
+				alert.innerHTML = 'Picture successful added to your favorites.';
+			} else if (statusId === 2) {
+				alert = document.querySelector('.alert-warning');
+				alert.innerHTML = 'You are not logged in.';
+			} else if (statusId === 3) {
+				alert = document.querySelector('.alert-danger');
+				alert.innerHTML = 'Failed to add picture to favorites.';
+			}
+
+			if (alert) {
 				alert.style.display = 'block';
 				setTimeout(() => {
-						alert.style.display = 'none';
-					},
-					3000);
+					alert.style.display = 'none';
+				}, 5000);
 			}
 		});
 	}
 
-	const showHdImageButton = document
-		.querySelector('.showHdImage')
-		.addEventListener('click', showHdImage);
+	const showHdImageButton = document.querySelector('.showHdImage');
+		showHdImageButton.addEventListener('click', showHdImage);
 
 	async function showHdImage() {
 		const url = '/?handler=showHdImage';
-		const response = await fetch(url,
-			{
-				method: 'GET',
-				headers: {
-					RequestVerificationToken: document.querySelector(
-						'input[name="__RequestVerificationToken"]'
-					).value,
-					'Content-Type': 'text/plain'
-				}
-			});
+		await fetch(url, {
+			method: 'POST',
+			headers: {
+				RequestVerificationToken: document.querySelector(
+					'input[name="__RequestVerificationToken"]'
+				).value,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(apodId)
+		})
+			.then((response) => response.json())
+			.then((document.location = '@(Model.Apod.LocalHdUrl)'))
+			.catch((document.location = '@(Model.Apod.HdUrl)'));
 	}
 </script>
 
