@@ -9,27 +9,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Copernicus_Weather.Pages
 {
-	public class ApodFavoritesModel : PageModel
-	{
-		private readonly Copernicus_WeatherContext _context;
-		private readonly UserManager<IdentityUser> _userManager;
+    public class ApodFavoritesModel : PageModel
+    {
+        private readonly Copernicus_WeatherContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-		public ApodFavoritesModel(Copernicus_WeatherContext context, UserManager<IdentityUser> userManager)
-		{
-			_context = context;
-			_userManager = userManager;
-		}
+        public ApodFavoritesModel(Copernicus_WeatherContext context, UserManager<IdentityUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
 
-		public IList<Apod> ApodList { get; private set; }
+        public IList<Apod> ApodList { get; private set; }
 
-		public async Task OnGetAsync()
-		{
-			string userId = (await _userManager.GetUserAsync(User))?.Id;
-			ApodList = await _context.Apod
-				.Include(apod => apod.FavoredByUsers)
-				.Where(apod => apod.FavoredByUsers
-					.Any(userApod => userId == userApod.IdentityUserId))
-				.ToListAsync();
-		}
-	}
+        public async Task OnGetAsync()
+        {
+            string userId = (await _userManager.GetUserAsync(principal: User))?.Id;
+            ApodList = await _context.Apod
+                .Include(navigationPropertyPath: apod => apod.FavoredByUsers)
+                .Where(predicate: apod => apod.FavoredByUsers
+                    .Any(userApod => userId == userApod.IdentityUserId))
+                .ToListAsync();
+        }
+    }
 }

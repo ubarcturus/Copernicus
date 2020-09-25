@@ -3,7 +3,7 @@
 @model Copernicus_Weather.Pages.WeatherReportModel
 
 @{
-    ViewData["Title"] = "WeatherReport";
+    ViewData[index: "Title"] = "WeatherReport";
 }
 
 <div class="text-center">
@@ -16,11 +16,11 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].DayOfTheYear)</th>
-        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].FirstUtc)</th>
-        <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].AtmosphericTemperature)</th>
-        <th>Average @Html.DisplayNameFor(weatherReport => weatherReport.Days[0].HorizontalWindSpeed)</th>
-        <th>@Html.DisplayNameFor(weatherReport => weatherReport.Days[0].Season)</th>
+        <th>@Html.DisplayNameFor(expression: weatherReport => weatherReport.Days[0].DayOfTheYear)</th>
+        <th>@Html.DisplayNameFor(expression: weatherReport => weatherReport.Days[0].FirstUtc)</th>
+        <th>Average @Html.DisplayNameFor(expression: weatherReport => weatherReport.Days[0].AtmosphericTemperature)</th>
+        <th>Average @Html.DisplayNameFor(expression: weatherReport => weatherReport.Days[0].HorizontalWindSpeed)</th>
+        <th>@Html.DisplayNameFor(expression: weatherReport => weatherReport.Days[0].Season)</th>
     </tr>
     </thead>
     <tbody>

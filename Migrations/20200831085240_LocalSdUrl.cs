@@ -7,25 +7,25 @@ namespace Copernicus_Weather.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "LocalUrl",
-                table: "Apod");
+                "LocalUrl",
+                "Apod");
 
             migrationBuilder.AddColumn<string>(
-                name: "LocalSdUrl",
-                table: "Apod",
+                "LocalSdUrl",
+                "Apod",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "LocalSdUrl",
-                table: "Apod");
+                "LocalSdUrl",
+                "Apod");
 
             migrationBuilder.AddColumn<string>(
-                name: "LocalUrl",
-                table: "Apod",
-                type: "nvarchar(max)",
+                "LocalUrl",
+                "Apod",
+                "nvarchar(max)",
                 nullable: true);
         }
     }

@@ -2,7 +2,7 @@
 @page "{urlDateParameter:datetime?}"
 @model IndexModel
 @{
-		ViewData["Title"] = "Home page";
+	ViewData["Title"] = "Home page";
 }
 <style>
 	body {
@@ -14,7 +14,7 @@
 
 	html:hover body {
 		background-blend-mode: color;
-		background-color: rgba(215, 215, 215, 0.85) !important;
+		background-color: rgba(215,215,215,0.85) !important;
 		opacity: 1;
 	}
 
@@ -23,7 +23,7 @@
 
 <div class="text-center">
 	<h1 class="display-4">Welcome</h1>
-	<p>@(Model.Apod.Explanation)</p>
+	<p>@(Model.Explanation)</p>
 </div>
 <div class="alert alert-success text-center" role="alert"></div>
 <div class="alert alert-warning text-center" role="alert"></div>
@@ -44,7 +44,6 @@
 	}
 
 	const apodId = document.querySelector('.apod-id').value;
-
 	async function addToFavorites() {
 		const url = '/?handler=addToFavorites';
 		const response = await fetch(url, {
@@ -63,7 +62,7 @@
 			console.log(statusId);
 
 			if (statusId === 1) {
-				addToFavoritesButton.style.display = 'none';
+				$('.addToFavorites').hide();
 				alert = document.querySelector('.alert-success');
 				alert.innerHTML = 'Picture successful added to your favorites.';
 			} else if (statusId === 2) {
@@ -84,11 +83,11 @@
 	}
 
 	const showHdImageButton = document.querySelector('.showHdImage');
-		showHdImageButton.addEventListener('click', showHdImage);
+	showHdImageButton.addEventListener('click', showHdImage);
 
 	async function showHdImage() {
 		const url = '/?handler=showHdImage';
-		await fetch(url, {
+		const saveHdPicture = await fetch(url, {
 			method: 'POST',
 			headers: {
 				RequestVerificationToken: document.querySelector(
@@ -97,9 +96,13 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(apodId)
-		})
-			.then((response) => response.json())
-			.then((document.location = '@(Model.Apod.LocalHdUrl)'))
+		});
+
+		saveHdPicture
+			.json()
+			.then((localHdUrl) => {
+				document.location = localHdUrl;
+			})
 			.catch((document.location = '@(Model.Apod.HdUrl)'));
 	}
 </script>
