@@ -23,7 +23,6 @@ namespace Copernicus_Weather.Pages
 {
 	public class IndexModel : PageModel
 	{
-		private readonly string _apodDirectoryPath = $"{Directory.GetCurrentDirectory()}/wwwroot/apod/";
 		private readonly Copernicus_WeatherContext _context;
 		private readonly ILogger<IndexModel> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
@@ -45,6 +44,8 @@ namespace Copernicus_Weather.Pages
 		public string PictureUrl { get; private set; }
 		public int ApodId { get; private set; }
 		public string Explanation { get; private set; }
+		private string ApodDirectoryPath { get; } = $"{Directory.GetCurrentDirectory()}/wwwroot/apod/";
+		private string HdDirectory { get; } = "hd_pictures/";
 
 		public async Task<PageResult> OnGetAsync(string urlDateParameter)
 		{
@@ -113,12 +114,10 @@ namespace Copernicus_Weather.Pages
 			{
 				if (Apod.Media_Type == "image")
 				{
-					SaveHdPictureAsync(httpClient: HttpClient);
-					AddApodLocalHdUrl();
+					AddHdPictureAsync();
 				}
 
 				await _context.UserApod.AddAsync(entity: userApod);
-				_context.Apod.Update(entity: Apod);
 				int changes = await _context.SaveChangesAsync();
 				_logger.LogInformation(message: $"{changes} Datenbankänderungen gespeichert");
 			}
@@ -131,6 +130,7 @@ namespace Copernicus_Weather.Pages
 			return new JsonResult(value: 1); //Picture successful added to your favorites.
 		}
 
+
 		public async Task<JsonResult> OnPostShowHdPictureAsync([FromBody] string apodId)
 		{
 			HttpClient = new HttpClient { BaseAddress = new Uri(uriString: Request.GetDisplayUrl()) };
@@ -139,14 +139,12 @@ namespace Copernicus_Weather.Pages
 
 			if (Apod.LocalHdUrl == null)
 			{
-				SaveHdPictureAsync(httpClient: HttpClient);
-				AddApodLocalHdUrl();
-
-				_context.Apod.Update(entity: Apod);
+				await AddHdPictureAsync();
 				changes = await _context.SaveChangesAsync();
 				_logger.LogInformation(message: $"{changes} Datenbankänderungen gespeichert");
 			}
-			return new JsonResult(Apod.LocalHdUrl);
+			JsonResult watch = new JsonResult(Apod.LocalHdUrl);
+			return watch;
 		}
 
 		// Allgemeine Funktionen
@@ -182,10 +180,16 @@ namespace Copernicus_Weather.Pages
 
 			Apod.Url = GetThumbnailUrl(thumbnails: thumbnails);
 		}
+		private async Task AddHdPictureAsync()
+		{
+			SaveHdPictureAsync(httpClient: HttpClient);
+			AddApodLocalHdUrl();
+			_context.Apod.Update(entity: Apod);
+		}
 
 		private void AddApodLocalHdUrl()
 		{
-			Apod.LocalHdUrl = $"apod/hd_images/{Apod.ImageFileName}";
+			Apod.LocalHdUrl = $"apod/{HdDirectory}{Apod.ImageFileName}";
 		}
 
 		private string GetImageFileName()
@@ -207,17 +211,17 @@ namespace Copernicus_Weather.Pages
 		private async void SavePictureAsync(HttpClient httpClient)
 		{
 			byte[] picture = await (await httpClient.GetAsync(requestUri: Apod.Url)).Content.ReadAsByteArrayAsync();
-			string directoryPath = Directory.CreateDirectory(path: _apodDirectoryPath).FullName;
+			string directoryPath = Directory.CreateDirectory(path: ApodDirectoryPath).FullName;
 			string fullPath = Path.Combine(path1: directoryPath, path2: Apod.ImageFileName);
 			await System.IO.File.WriteAllBytesAsync(path: fullPath, bytes: picture);
 
 			_logger.LogInformation(message: "Bild gespeichert");
 		}
 
-		private async void SaveHdPictureAsync(HttpClient httpClient)
+		private async Task SaveHdPictureAsync(HttpClient httpClient)
 		{
 			byte[] hdPicture = await (await httpClient.GetAsync(requestUri: Apod.HdUrl)).Content.ReadAsByteArrayAsync();
-			string hdDirectoryPath = Directory.CreateDirectory(path: $"{_apodDirectoryPath}hd_images/").FullName;
+			string hdDirectoryPath = Directory.CreateDirectory(path: ApodDirectoryPath + HdDirectory).FullName;
 			string hdFullPath = Path.Combine(path1: hdDirectoryPath, path2: Apod.ImageFileName);
 			await System.IO.File.WriteAllBytesAsync(path: hdFullPath, bytes: hdPicture);
 
@@ -236,12 +240,12 @@ namespace Copernicus_Weather.Pages
 		private async Task SetFavoredByCurrentUserAsync()
 		{
 			string userId = await GetUserIdAsync();
-			FavoredByCurrentUser = Apod?.FavoredByUsers.Any(predicate: userApod => userId == userApod.IdentityUserId) == true;
+			FavoredByCurrentUser = Apod?.FavoredByUsers.Any(userApod => userId == userApod.IdentityUserId) == true;
 		}
 
 		private async Task<string> GetUserIdAsync()
 		{
-			return (await _userManager.GetUserAsync(principal: User))?.Id;
+			return (await _userManager.GetUserAsync(User))?.Id;
 		}
 	}
 }

@@ -3,7 +3,7 @@ export_on_save:
   markdown: true
 ---
 
-# Codeschnipsel {ignore=true}
+# Codeschnipsel <!-- omit in toc --> {ignore=true}
 
 ---
 

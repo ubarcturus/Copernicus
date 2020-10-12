@@ -32,7 +32,7 @@
 	@if (!Model.FavoredByCurrentUser) {
 	<button class="btn btn-primary addToFavorites flex-item" type="submit">Add picture to favorites</button>
 	}
-	<button class="btn btn-primary showHdImage flex-item">Show HD Image</button>
+	<button class="btn btn-primary showHdPicture flex-item">Show HD Picture</button>
 </div>
 @Html.AntiForgeryToken()
 <input type="hidden" class="apod-id" value="@(Model.ApodId)" />
@@ -82,11 +82,11 @@
 		});
 	}
 
-	const showHdImageButton = document.querySelector('.showHdImage');
-	showHdImageButton.addEventListener('click', showHdImage);
+	const showHdPictureButton = document.querySelector('.showHdPicture');
+	showHdPictureButton.addEventListener('click', showHdPicture);
 
-	async function showHdImage() {
-		const url = '/?handler=showHdImage';
+	async function showHdPicture() {
+		const url = '/?handler=showHdPicture';
 		const saveHdPicture = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -103,7 +103,9 @@
 			.then((localHdUrl) => {
 				document.location = localHdUrl;
 			})
-			.catch((document.location = '@(Model.Apod.HdUrl)'));
+			.catch(() => {
+				document.location = '@(Model.Apod.HdUrl)';
+			});
 	}
 </script>
 
